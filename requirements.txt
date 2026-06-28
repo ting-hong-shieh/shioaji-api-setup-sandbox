@@ -1,0 +1,2 @@
+python-dotenv==1.2.1
+shioaji==1.5.4
