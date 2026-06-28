@@ -1,225 +1,128 @@
-# Shioaji API Setup Sandbox
+# Shioaji API 啟用測試工具
 
-English | [中文](#中文)
+這是一個跑在使用者自己電腦上的 Shioaji API 啟用檢查器。它把登入、帳戶權限、股票模擬委託、期貨模擬委託整理成一個瀏覽器介面，讓正在申請或驗證永豐金 Shioaji API 的使用者，不必自己打指令或拆讀 Python 範例，就能知道目前卡在哪一步。
 
-This is a personal sandbox for validating the basic setup flow of the SinoPac Shioaji API, including environment-based authentication, account inspection, contract lookup, and simulated order placement.
+這不是永豐官方專案，也不是交易系統、交易策略或代操工具。所有委託檢查都固定使用 `simulation=true` 模擬模式，不會送出真實交易。
 
-It is not a trading system or a strategy repository.
+## 這個工具想解決什麼
 
-It currently supports:
+申請 Shioaji API 時，使用者常遇到的痛點不是「怎麼寫交易策略」，而是更前面的幾件事：
 
-- Loading API credentials from environment variables
-- Testing Shioaji API login
-- Inspecting available accounts
-- Looking up futures contracts
-- Placing simulated stock orders
-- Testing simulated futures orders, if a futures account is available
+- API Key / Secret Key 到底能不能登入。
+- 證券帳戶和期貨帳戶是否都已經開通 API 權限。
+- 能查到商品合約，是否也代表可以送出模擬委託。
+- 測試結果要怎麼整理成一段可複製的摘要，方便回報給客服、同事或自己留存。
 
-## Disclaimer
+這個專案的角色，就是把上述流程收斂成一次「開始檢查」。
 
-This project is for learning and testing purposes only.  
-The order examples use simulation mode and are not intended as investment advice.
+## 使用者最後會怎麼操作
 
-## Official Resources
+使用者不是連到某個雲端網站輸入金鑰，而是把這個 GitHub 專案下載到自己的電腦，在本機啟動一個小型網頁服務。
 
-To use Shioaji for trading, users need to apply for API access through SinoPac Securities, sign the API electronic trading risk disclosure, apply for an API Key, and complete the required API test. Stock and futures permissions are handled separately.
+建議流程：
 
-- [SinoPac Python API introduction and application process](https://ai.sinotrade.com.tw/python/Main/index.aspx)
-- [Shioaji official documentation](https://sinotrade.github.io/)
+1. 到 GitHub 專案頁點 `Code` -> `Download ZIP`，或用 `git clone` 下載。
+2. 解壓縮後打開資料夾。
+3. macOS 連點 `start.command`；Windows 連點 `start.bat`。
+4. 瀏覽器會開啟 `http://127.0.0.1:8011`。
+5. 貼上 API Key / Secret Key，按「開始檢查」。
+6. 查看登入、帳戶權限、股票與期貨模擬委託結果，必要時複製摘要。
 
-## Project Structure
+之所以採用本機執行，是因為 API Key 和 Secret Key 不應該送到不明的外部伺服器。這個工具只接受 `127.0.0.1` / `localhost` 連線，前端資源也放在專案內，不依賴 CDN。
+
+## 快速開始
+
+### macOS
+
+在 Finder 連點兩下：
 
 ```text
-.
-├── check_accounts.py
-├── check_futures_contracts.py
-├── test_login.py
-├── test_stock_order.py
-├── test_futures_order.py
-├── requirements.txt
-├── .env.example
-├── .gitignore
-└── README.md
+start.command
 ```
 
-## Setup
+第一次執行若被 macOS 擋下，請在檔案上按右鍵，選「打開」。
 
-Create a virtual environment:
+### Windows
+
+連點兩下：
+
+```text
+start.bat
+```
+
+啟動腳本會自動建立 `.venv`、安裝 Python 套件、啟動本機服務，並開啟瀏覽器。
+
+## 手動啟動
+
+如果你偏好命令列：
 
 ```bash
-python -m venv .venv
+python3 -m venv .venv
 source .venv/bin/activate
-```
-
-Install dependencies:
-
-```bash
 pip install -r requirements.txt
+python -m uvicorn app:app --host 127.0.0.1 --port 8011
 ```
 
-Create a `.env` file:
+Windows 啟用虛擬環境的指令是：
 
-```bash
-cp .env.example .env
+```bat
+.venv\Scripts\activate
 ```
 
-Then fill in your own Shioaji API credentials:
+接著開啟：
 
-```env
-SJ_API_KEY=your_api_key_here
-SJ_SECRET_KEY=your_secret_key_here
+```text
+http://127.0.0.1:8011
 ```
 
-## Usage
+## 檢查項目
 
-Test login:
+- Shioaji API 登入。
+- 證券帳戶權限。
+- 期貨帳戶權限。
+- 股票模擬委託：永豐金 `TSE2890`，限價買進 1 張。
+- 期貨模擬委託：自動挑選可用的 TXF 台指期合約，限價買進 1 口。
+- 可複製的文字摘要與完整回傳資料。
 
-```bash
-python test_login.py
-```
+如果帳戶尚未開通某一類權限，該項委託會標示為「未執行」，不會中斷整份報告。
 
-Check accounts:
+## 安全設計
 
-```bash
-python check_accounts.py
-```
-
-Check futures contracts:
-
-```bash
-python check_futures_contracts.py
-```
-
-Test simulated stock order:
-
-```bash
-python test_stock_order.py
-```
-
-Test simulated futures order:
-
-```bash
-python test_futures_order.py
-```
-
-## Notes
-
-- `.env` is ignored by Git and should never be committed.
-- `.venv` is ignored by Git.
-- The stock order example uses Shioaji simulation mode.
-- Futures trading requires a valid futures account and API permission.
-- Being able to look up futures contracts does not necessarily mean the account can place futures orders.
-
----
-
-# 中文
-
-[English](#shioaji-api-setup-sandbox) | 中文
-
-這是一個個人測試用 sandbox，用來驗證永豐 Shioaji API 的基本設定流程，包含環境變數登入、帳戶檢查、商品合約查詢與模擬委託。
-
-這不是完整交易系統，也不是交易策略專案。
-
-目前支援：
-
-- 從環境變數讀取 API credentials
-- 測試 Shioaji API 登入
-- 檢查可用帳戶
-- 查詢期貨商品合約
-- 送出模擬股票委託單
-- 若帳戶已開通期貨權限，可測試模擬期貨委託單
-
-## 免責聲明
-
-本專案僅供學習與測試用途。  
-範例委託單皆使用模擬模式，內容不構成任何投資建議。
-
-## 官方資源
-
-若要使用 Shioaji 進行交易，使用者需要透過永豐金證券申請 API 權限、簽署 API 電子交易風險預告書、申請 API Key，並完成 API 測試。證券與期貨權限需要分別簽署與測試。
-
-- [永豐金證券 Python API 介紹與申請流程](https://ai.sinotrade.com.tw/python/Main/index.aspx)
-- [Shioaji 官方文件](https://sinotrade.github.io/)
+- 固定以 `simulation=true` 建立 Shioaji 連線。
+- Web 服務只接受本機 loopback 連線。
+- 頁面資源使用本地檔案，不向 CDN 載入 three.js 或字型。
+- `.env`、`.venv`、`shioaji.log` 已加入 `.gitignore`。
+- 前端不會把金鑰存入瀏覽器儲存空間；金鑰只在按下檢查時送到本機服務使用。
 
 ## 專案結構
 
 ```text
 .
-├── check_accounts.py
-├── check_futures_contracts.py
-├── test_login.py
-├── test_stock_order.py
-├── test_futures_order.py
+├── app.py                  # FastAPI 本機服務與 loopback 防護
+├── shioaji_tester.py       # Shioaji 登入、帳戶與模擬委託檢查邏輯
+├── templates/index.html    # 單頁介面
+├── static/app.css          # Liquid glass / aurora 介面樣式
+├── static/app.js           # 檢查流程、報告渲染與互動背景
+├── static/vendor/three.min.js
+├── start.command           # macOS 一鍵啟動
+├── start.bat               # Windows 一鍵啟動
 ├── requirements.txt
-├── .env.example
-├── .gitignore
 └── README.md
 ```
 
-## 環境設定
+## 需求
 
-建立虛擬環境：
+- Python 3.9 或更新版本。
+- 已向永豐金證券申請 Shioaji API Key / Secret Key。
+- 若要檢查期貨模擬委託，需要期貨帳戶與對應 API 權限。
 
-```bash
-python -m venv .venv
-source .venv/bin/activate
-```
+實際申請條件、風險預告書簽署與測試規則，請以永豐官方說明為準。
 
-安裝套件：
+## 官方資源
 
-```bash
-pip install -r requirements.txt
-```
+- 永豐 Python API 介紹與申請流程：<https://ai.sinotrade.com.tw/python/Main/index.aspx>
+- Shioaji 官方文件：<https://sinotrade.github.io/>
 
-建立 `.env` 檔案：
+## 免責聲明
 
-```bash
-cp .env.example .env
-```
-
-接著填入你自己的 Shioaji API credentials：
-
-```env
-SJ_API_KEY=your_api_key_here
-SJ_SECRET_KEY=your_secret_key_here
-```
-
-## 使用方式
-
-測試登入：
-
-```bash
-python test_login.py
-```
-
-檢查帳戶：
-
-```bash
-python check_accounts.py
-```
-
-查詢期貨合約：
-
-```bash
-python check_futures_contracts.py
-```
-
-測試模擬股票下單：
-
-```bash
-python test_stock_order.py
-```
-
-測試模擬期貨下單：
-
-```bash
-python test_futures_order.py
-```
-
-## 注意事項
-
-- `.env` 已被 Git 忽略，不應該被提交到 GitHub。
-- `.venv` 已被 Git 忽略。
-- 股票委託範例使用 Shioaji 模擬模式。
-- 期貨交易需要有效的期貨帳戶與 API 權限。
-- 查得到期貨合約不代表帳戶一定能下期貨單。
+本專案僅供學習、申請流程檢查與本機驗證用途。測試標的、價格與委託內容只是用來確認 API 權限與模擬委託流程，不構成任何投資建議。

@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Shioaji API 啟用測試工具</title>
+    <link rel="stylesheet" href="/static/app.css?v=nebula5" />
+  </head>
+  <body>
+    <canvas id="ambient-canvas" aria-hidden="true"></canvas>
+    <p class="gesture-hint" id="gesture-hint">移動游標，拂動極光</p>
+    <main class="shell">
+      <section class="workspace">
+        <form class="panel" id="credential-form">
+          <div class="title-row">
+            <div>
+              <p class="eyebrow">SinoPac Shioaji</p>
+              <h1><span class="brand-latin">API</span> 啟用測試</h1>
+              <p class="lead">本機模擬檢查流程</p>
+            </div>
+          </div>
+
+          <div class="safety-panel" aria-label="執行環境">
+            <div>
+              <p>執行位置</p>
+              <strong>僅限本機 loopback</strong>
+              <span>127.0.0.1 / localhost</span>
+            </div>
+            <div class="mode-control" aria-label="simulation 模式">
+              <span class="mode-option active">simulation=true</span>
+              <button class="mode-option" type="button" disabled>simulation=false</button>
+            </div>
+          </div>
+
+          <label>
+            <span>API Key</span>
+            <input id="api-key" autocomplete="off" spellcheck="false" />
+          </label>
+
+          <label>
+            <span>Secret Key</span>
+            <input id="secret-key" type="password" autocomplete="off" spellcheck="false" />
+          </label>
+
+          <div class="actions" aria-label="檢查項目">
+            <button class="primary-action" type="button" data-action="full">開始檢查</button>
+          </div>
+        </form>
+
+        <section class="results" aria-live="polite">
+          <div class="status-card" id="status-card">
+            <p class="status-label">狀態</p>
+            <h2 id="status-title">尚未測試</h2>
+            <p id="status-message">等待測試</p>
+          </div>
+
+          <article class="report">
+            <div class="article-heading">
+              <p>檢查報告</p>
+            </div>
+            <div class="step-list" id="step-list">
+              <div class="empty-state">-</div>
+            </div>
+          </article>
+
+          <article class="orders-card">
+            <div class="article-heading">
+              <p>模擬委託內容</p>
+            </div>
+            <div class="order-grid" id="order-grid">
+              <div class="empty-state">-</div>
+            </div>
+          </article>
+
+          <div class="result-grid">
+            <article>
+              <p>證券帳戶</p>
+              <pre id="stock-account">-</pre>
+            </article>
+            <article>
+              <p>期貨帳戶</p>
+              <pre id="futures-account">-</pre>
+            </article>
+          </div>
+
+          <article class="summary-card">
+            <div class="article-heading">
+              <p>摘要</p>
+              <button class="copy-button" type="button" id="copy-summary">複製</button>
+            </div>
+            <pre id="summary-result">-</pre>
+          </article>
+
+          <article class="full">
+            <p>完整回傳</p>
+            <pre id="raw-result">-</pre>
+          </article>
+        </section>
+      </section>
+    </main>
+    <script src="/static/vendor/three.min.js"></script>
+    <script src="/static/app.js?v=nebula5"></script>
+  </body>
+</html>
