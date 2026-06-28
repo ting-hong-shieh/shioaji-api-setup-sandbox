@@ -1,5 +1,7 @@
 # Shioaji API 啟用測試工具
 
+中文 | [English](#english)
+
 這是一個跑在使用者自己電腦上的 Shioaji API 啟用檢查器。它把登入、帳戶權限、股票模擬委託、期貨模擬委託整理成一個瀏覽器介面，讓正在申請或驗證永豐金 Shioaji API 的使用者，不必自己打指令或拆讀 Python 範例，就能知道目前卡在哪一步。
 
 這不是永豐官方專案，也不是交易系統、交易策略或代操工具。所有委託檢查都固定使用 `simulation=true` 模擬模式，不會送出真實交易。
@@ -126,3 +128,136 @@ http://127.0.0.1:8011
 ## 免責聲明
 
 本專案僅供學習、申請流程檢查與本機驗證用途。測試標的、價格與委託內容只是用來確認 API 權限與模擬委託流程，不構成任何投資建議。
+
+---
+
+# English
+
+[中文](#shioaji-api-啟用測試工具) | English
+
+This is a local Shioaji API activation checker that runs on the user's own computer. It turns login validation, account permission checks, simulated stock orders, and simulated futures orders into a browser-based workflow, so users who are applying for or verifying SinoPac Shioaji API access can see where they are blocked without running several Python scripts by hand.
+
+This is not an official SinoPac project, a trading system, a trading strategy, or a managed trading tool. All order checks are locked to `simulation=true`, so the app does not place real trades.
+
+## What This Tool Solves
+
+When users apply for Shioaji API access, the immediate pain point is usually not strategy development. It is the setup and verification process:
+
+- Whether the API Key / Secret Key can log in successfully.
+- Whether stock and futures API permissions are both enabled.
+- Whether being able to query contracts also means simulated orders can be submitted.
+- How to turn the test result into a copyable summary for support, teammates, or personal records.
+
+This project compresses that flow into one "Start Check" action.
+
+## How Users Run It
+
+Users should not enter API credentials into an unknown cloud website. Instead, they download this GitHub project and run a small local web service on their own computer.
+
+Recommended flow:
+
+1. On the GitHub project page, click `Code` -> `Download ZIP`, or download it with `git clone`.
+2. Unzip the project and open the folder.
+3. On macOS, double-click `start.command`; on Windows, double-click `start.bat`.
+4. The browser opens `http://127.0.0.1:8011`.
+5. Paste the API Key / Secret Key and click "開始檢查".
+6. Review the login, account permission, simulated stock order, and simulated futures order results. Copy the summary if needed.
+
+The app is designed this way because API Key and Secret Key values should stay on the user's own machine. The web service only accepts `127.0.0.1` / `localhost` connections, and frontend assets are bundled locally instead of loaded from a CDN.
+
+## Quick Start
+
+### macOS
+
+Double-click this file in Finder:
+
+```text
+start.command
+```
+
+If macOS blocks the first launch, right-click the file and choose "Open".
+
+### Windows
+
+Double-click:
+
+```text
+start.bat
+```
+
+The launcher creates `.venv`, installs Python dependencies, starts the local service, and opens the browser.
+
+## Manual Start
+
+If you prefer the command line:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+python -m uvicorn app:app --host 127.0.0.1 --port 8011
+```
+
+On Windows, activate the virtual environment with:
+
+```bat
+.venv\Scripts\activate
+```
+
+Then open:
+
+```text
+http://127.0.0.1:8011
+```
+
+## Checks
+
+- Shioaji API login.
+- Stock account permission.
+- Futures account permission.
+- Simulated stock order: SinoPac Holdings `TSE2890`, limit buy, 1 board lot.
+- Simulated futures order: automatically selects an available TXF contract, limit buy, 1 contract.
+- Copyable text summary and full raw response.
+
+If an account permission is not enabled, the related order check is marked as skipped instead of stopping the whole report.
+
+## Safety Design
+
+- Shioaji is always initialized with `simulation=true`.
+- The web service only accepts local loopback connections.
+- Page assets are served from local files; three.js and fonts are not loaded from a CDN.
+- `.env`, `.venv`, and `shioaji.log` are ignored by Git.
+- The frontend does not store credentials in browser storage. Credentials are sent only to the local service when the user starts a check.
+
+## Project Structure
+
+```text
+.
+├── app.py                  # FastAPI local service and loopback guard
+├── shioaji_tester.py       # Shioaji login, account, and simulated order checks
+├── templates/index.html    # Single-page UI
+├── static/app.css          # Liquid glass / aurora interface styles
+├── static/app.js           # Check flow, report rendering, and interactive background
+├── static/vendor/three.min.js
+├── start.command           # macOS one-click launcher
+├── start.bat               # Windows one-click launcher
+├── requirements.txt
+└── README.md
+```
+
+## Requirements
+
+- Python 3.9 or newer.
+- A Shioaji API Key / Secret Key issued through SinoPac Securities.
+- A futures account and matching API permission are required for the futures simulated order check.
+
+Actual application requirements, risk disclosure signing, and testing rules should always follow SinoPac's official instructions.
+
+## Official Resources
+
+- SinoPac Python API introduction and application flow: <https://ai.sinotrade.com.tw/python/Main/index.aspx>
+- Shioaji official documentation: <https://sinotrade.github.io/>
+
+## Disclaimer
+
+This project is for learning, application-flow checks, and local verification only. The sample symbols, prices, and orders are used only to verify API permissions and simulated order flow. They are not investment advice.
