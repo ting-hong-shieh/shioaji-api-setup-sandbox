@@ -44,6 +44,17 @@ start.command
 
 第一次執行若被 macOS 擋下，請在檔案上按右鍵，選「打開」。
 
+如果仍然無法開啟，請用下面的 Terminal 指令解除下載檔案的安全標記後再啟動：
+
+```bash
+cd ~/Downloads/shioaji-api-setup-sandbox-main
+xattr -dr com.apple.quarantine .
+chmod +x start.command
+./start.command
+```
+
+如果你的資料夾不在 `~/Downloads/shioaji-api-setup-sandbox-main`，請先把 `cd` 後面的路徑換成你實際解壓縮的位置。
+
 ### Windows
 
 連點兩下：
@@ -76,6 +87,23 @@ Windows 啟用虛擬環境的指令是：
 ```text
 http://127.0.0.1:8011
 ```
+
+## macOS 被擋怎麼辦
+
+從 GitHub 下載 ZIP 後，macOS 可能會把 `start.command` 標記為「來自網路下載的檔案」，因此第一次雙擊時會被 Gatekeeper 擋下。這是 macOS 的安全機制，不代表工具壞掉。
+
+建議依序嘗試：
+
+1. 在 Finder 對 `start.command` 按右鍵，選「打開」，再按一次「打開」確認。
+2. 若還是被擋，打開 Terminal，進到專案資料夾後執行：
+
+```bash
+xattr -dr com.apple.quarantine .
+chmod +x start.command
+./start.command
+```
+
+這只會移除這個下載資料夾的 quarantine 標記，讓 macOS 允許你執行本機啟動腳本。
 
 ## 檢查項目
 
@@ -177,6 +205,17 @@ start.command
 
 If macOS blocks the first launch, right-click the file and choose "Open".
 
+If it is still blocked, remove the download quarantine flag from the extracted folder and launch it from Terminal:
+
+```bash
+cd ~/Downloads/shioaji-api-setup-sandbox-main
+xattr -dr com.apple.quarantine .
+chmod +x start.command
+./start.command
+```
+
+If your folder is not located at `~/Downloads/shioaji-api-setup-sandbox-main`, replace the `cd` path with the actual extracted project path.
+
 ### Windows
 
 Double-click:
@@ -209,6 +248,23 @@ Then open:
 ```text
 http://127.0.0.1:8011
 ```
+
+## macOS Gatekeeper Troubleshooting
+
+When the project is downloaded as a GitHub ZIP file, macOS may mark `start.command` as a file downloaded from the internet and block it on the first launch. This is Gatekeeper protection; it does not mean the app is broken.
+
+Try these steps in order:
+
+1. In Finder, right-click `start.command`, choose "Open", then confirm "Open" again.
+2. If it is still blocked, open Terminal, enter the project folder, and run:
+
+```bash
+xattr -dr com.apple.quarantine .
+chmod +x start.command
+./start.command
+```
+
+This only removes the quarantine flag from this downloaded project folder so macOS can run the local launcher script.
 
 ## Checks
 
